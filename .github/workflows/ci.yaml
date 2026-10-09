@@ -15,17 +15,20 @@ jobs:
 
   # stage 1 lint dockerfile
   lint:
-    name: Dockerfile Lint
+    name: Dockerfile and Gitleaks
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
       
       - name: Run Gitleaks
         uses: gitleaks/gitleaks-action@v3
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       
-      - uses: hadolint/hadolint-action@v3.1.0
+      - name: Run Dockerlint
+        uses: hadolint/hadolint-action@v3.1.0
         with:
           dockerfile: Dockerfile
 
@@ -57,7 +60,7 @@ jobs:
           sleep 3
           check_endpoint() {
             local path="$1"
-            echo "Testing endpoint http://localhost:8080$path..."
+            echo "Testing endpoint http://localhost:8080$path"
             if ! curl --fail --silent --show-error "http://localhost:8080$path" > /dev/null; then
               echo "::error title=Smoke Test Failed::Smoke test failed for endpoint $path"
               echo "--- Container Logs ---"
