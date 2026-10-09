@@ -44,11 +44,37 @@ jobs:
           vuln-type: 'os,library'
           severity: 'CRITICAL,HIGH'
 
+  smoke_test:
+    name: Container Smoke Test
+    needs: security_scan
+    runs-on: ubuntu-24.04
+    run: |
+      docker run -d --name test-app -p 8080:8080 mattous/greeting-container:${{ github.sha }}
+      sleep 3
+      # Verify health endpoint returns HTTP 200
+      curl --fail http://localhost:8080/healthz || exit 1
+      
+      # Verify info endpoint
+      curl --fail http://localhost:8080/info || exit 1
+      
+      # Verify non-root execution
+      USER_ID=$(docker exec test-app id -u)
+      
+      if [ "$USER_ID" -eq 0 ]; then
+        echo "Error: Container running as root!"
+        exit 1
+      fi
+      
+      docker stop test-app  
+
   # stage 3 build and push
   publish:
     name: Publish image to GHCR
-    needs: security_scan
+    needs: smoke_test
     runs-on: ubuntu-24.04
+
+    # only publish when merging into main
+    # if: github.ref == 'refs/heads/main' && github.event_name == 'push'
 
     permissions:
       contents: read
