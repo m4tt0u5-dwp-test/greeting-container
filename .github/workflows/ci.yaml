@@ -57,7 +57,7 @@ jobs:
 
       - name: Run Smoke Test
         run: |
-          docker run -d --name test-app -p 8080:8080 mattous/greeting-container:${{ github.sha }}
+          docker run -d --name test-app -p 8080:8080 m4tt0u5-dwp-test/greeting-container:${{ github.sha }}
           sleep 3
           check_endpoint() {
             local path="$1"
