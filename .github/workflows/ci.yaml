@@ -13,9 +13,8 @@ env:
 
 jobs:
 
-  # stage 1 lint dockerfile
   lint:
-    name: Dockerfile and Gitleaks
+    name: Dockerfile Lint and Gitleaks
     runs-on: ubuntu-24.04
     permissions:
       contents: read
@@ -35,7 +34,6 @@ jobs:
         with:
           dockerfile: Dockerfile
 
-  # stage 2 security scan
   security_scan:
     name: Security Scan & Smoke Test
     needs: lint
@@ -82,9 +80,8 @@ jobs:
           fi
           docker stop test-app
 
-  # stage 3 build and push
   publish:
-    name: Publish image to GHCR
+    name: Build & Publish image to GHCR
     needs: security_scan
     runs-on: ubuntu-24.04
 
