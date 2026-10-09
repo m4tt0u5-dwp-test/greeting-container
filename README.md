@@ -80,15 +80,24 @@ Added Continuous Integration tests using github actions.
 
 ### Running the build locally
 
-`docker buildx build --load -t m4tt0u5-dwp-test/sample-app:v1 .` 
-`docker run -it -p 8080:8080 m4tt0u5-dwp-test/sample-app:v1`
+`docker buildx build --load -t m4tt0u5-dwp-test/greeting-container:v1 .` 
+`docker run -it -p 8080:8080 m4tt0u5-dwp-test/greeting-container:v1`
 
 ### Push to GHCR
 
-`echo $GITHUB_TOKEN | docker login ghcr.io -u m4tt0u5-dwp-test --password-stdin`
+```shell
+export GITHUB_TOKEN=<token>
 
-`docker buildx build --platform linux/amd64,linux/arm64 --tag ghcr.io/m4tt0u5-dwp-test/sample-app:v1 --push .`
+echo $GITHUB_TOKEN | docker login ghcr.io -u m4tt0u5-dwp-test --password-stdin
+
+docker buildx build \
+  --platform linux/amd64,linux/arm64 \
+  --annotation "index:org.opencontainers.image.description=Production-grade container for the DWP DevOps assessment" \
+  --annotation "index:org.opencontainers.image.source=https://github.com/m4tt0u5-dwp-test/greeting-container" \
+  --tag ghcr.io/m4tt0u5-dwp-test/greeting-container:v1 \
+  --push .
+```
 
 ### Pull from GHCR
 
-`docker pull ghcr.io/m4tt0u5-dwp-test/sample-app:v1`
+`docker pull ghcr.io/m4tt0u5-dwp-test/greeting-container:v1`
