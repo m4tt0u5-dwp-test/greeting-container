@@ -23,6 +23,11 @@ ENV PATH="/opt/venv/bin:$PATH" \
 
 USER 10001:10001
 
+LABEL org.opencontainers.image.title="greeting-container" \
+    org.opencontainers.image.description="Production-grade container for the DWP DevOps assessment" \
+    org.opencontainers.image.source="https://github.com/m4tt0u5-dwp-test/greeting-container" \
+    org.opencontainers.image.licenses="MIT"
+
 EXPOSE 8080
 
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
