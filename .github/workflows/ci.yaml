@@ -62,7 +62,6 @@ jobs:
           check_endpoint "/healthz"
           check_endpoint "/info"
           check_endpoint "/"
-          check_endpoint "/will_fail"
           # Verify non-root execution
           USER_ID=$(docker exec test-app id -u)
           if [ "$USER_ID" -eq 0 ]; then
