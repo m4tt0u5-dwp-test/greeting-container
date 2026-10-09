@@ -53,6 +53,8 @@ jobs:
           curl --fail --silent http://localhost:8080/healthz || exit 1
           # Verify info endpoint
           curl --fail --silent http://localhost:8080/info || exit 1
+          # Verify root endpoint
+          curl --fail --silent http://localhost:8080/ || exit 1
           # Verify non-root execution
           USER_ID=$(docker exec test-app id -u)
           if [ "$USER_ID" -eq 0 ]; then
