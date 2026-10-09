@@ -8,7 +8,7 @@ on:
 
 env:
   IMAGE_REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.actor }}/greeting-container
+  IMAGE_NAME: ${{ github.actor }}/sample-app
   IMAGE_TAG: "v1"
 
 jobs:
@@ -43,12 +43,12 @@ jobs:
         uses: actions/checkout@v7
 
       - name: Build an image from Dockerfile
-        run: docker build -t mattous/greeting-container:${{ github.sha }} .
+        run: docker build -t m4tt0u5-dwp-test/greeting-container:${{ github.sha }} .
 
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@v0.36.0
         with:
-          image-ref: 'mattous/greeting-container:${{ github.sha }}'
+          image-ref: 'm4tt0u5-dwp-test/greeting-container:${{ github.sha }}'
           format: 'table'
           exit-code: '1'
           ignore-unfixed: true
