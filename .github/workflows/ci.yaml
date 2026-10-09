@@ -49,12 +49,20 @@ jobs:
         run: |
           docker run -d --name test-app -p 8080:8080 mattous/greeting-container:${{ github.sha }}
           sleep 3
-          # Verify health endpoint returns HTTP 200
-          curl --fail --silent http://localhost:8080/healthz || exit 1
-          # Verify info endpoint
-          curl --fail --silent http://localhost:8080/info || exit 1
-          # Verify root endpoint
-          curl --fail --silent http://localhost:8080/ || exit 1
+          check_endpoint() {
+            local path="$1"
+            echo "Testing endpoint http://localhost:8080$path..."
+            if ! curl --fail --silent --show-error "http://localhost:8080$path" > /dev/null; then
+              echo "Error: Smoke test failed for endpoint $path"
+              echo "--- Container Logs ---"
+              docker logs test-app
+              exit 1
+            fi
+          }
+          check_endpoint "/healthz"
+          check_endpoint "/info"
+          check_endpoint "/"
+          check_endpoint "/will_fail"
           # Verify non-root execution
           USER_ID=$(docker exec test-app id -u)
           if [ "$USER_ID" -eq 0 ]; then
