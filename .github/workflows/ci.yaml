@@ -19,6 +19,10 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v7
+      
+      - name: Run Gitleaks
+        uses: gitleaks/gitleaks-action@v3
+      
       - uses: hadolint/hadolint-action@v3.1.0
         with:
           dockerfile: Dockerfile
@@ -76,7 +80,7 @@ jobs:
     needs: security_scan
     runs-on: ubuntu-24.04
 
-    # only publish when merging into main
+    # only publish when merging into main TODO: uncomment the below on merging to main
     # if: github.ref == 'refs/heads/main' && github.event_name == 'push'
 
     permissions:
