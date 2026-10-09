@@ -8,7 +8,7 @@ on:
 
 env:
   IMAGE_REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.actor }}/sample-app
+  IMAGE_NAME: ${{ github.actor }}/greeting-container
   IMAGE_TAG: "v1"
 
 jobs:
