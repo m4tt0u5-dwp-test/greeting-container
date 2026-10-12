@@ -9,7 +9,7 @@ on:
 env:
   IMAGE_REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.actor }}/greeting-container
-  IMAGE_TAG: "v1"
+  IMAGE_TAG: "v1" 
 
 jobs:
 
@@ -85,8 +85,8 @@ jobs:
     needs: security_scan
     runs-on: ubuntu-24.04
 
-    # only publish when merging into main TODO: uncomment the below on merging to main
-    # if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    # only publish when merging into main
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
 
     permissions:
       contents: read
@@ -119,5 +119,7 @@ jobs:
           platforms: linux/amd64,linux/arm64
           tags: ${{ env.IMAGE_REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}
           annotations: |
+            index:org.opencontainers.image.title=greeting-container
             index:org.opencontainers.image.description=Production-grade container for the DWP DevOps assessment
             index:org.opencontainers.image.source=https://github.com/${{ github.repository }}
+            index:org.opencontainers.image.licenses=MIT
