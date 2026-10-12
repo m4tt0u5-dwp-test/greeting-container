@@ -1,18 +1,39 @@
-FROM python:3.12@sha256:63828510c8b5ccce3bf0d6fabd6f3d17d4effa1ffe690f80a67c8e2d394e03ee
-
-RUN apt-get update && apt-get install -y \
-    build-essential \
-    gcc \
-    curl \
-    vim
+### Build stage ###
+FROM python:3.12.15-alpine@sha256:1b668429b3511ab407d8e00648891631b0b1a4d7e15e3ca70f38ab5b91ad4ab4 AS build
 
 WORKDIR /app
 
-COPY . .
+COPY app/requirements.txt .
 
-RUN pip install -r app/requirements.txt
+RUN python -m venv /opt/venv && \
+    /opt/venv/bin/pip install --no-cache-dir -r requirements.txt
+
+### Runtime stage ###
+FROM python:3.12.15-alpine@sha256:1b668429b3511ab407d8e00648891631b0b1a4d7e15e3ca70f38ab5b91ad4ab4
+
+WORKDIR /app
+
+RUN addgroup -g 10001 -S appgroup && \
+    adduser -u 10001 -S appuser -G appgroup
+
+COPY --chown=10001:10001 --from=build /opt/venv /opt/venv
+COPY --chown=10001:10001 app/ .  
+
+ENV PATH="/opt/venv/bin:$PATH" \
+    PYTHONUNBUFFERED="1" \
+    PYTHONDONTWRITEBYTECODE="1"
+
+USER 10001:10001
+
+LABEL org.opencontainers.image.title="greeting-container" \
+    org.opencontainers.image.description="Production-grade container for the DWP DevOps assessment" \
+    org.opencontainers.image.source="https://github.com/m4tt0u5-dwp-test/greeting-container" \
+    org.opencontainers.image.licenses="MIT"
 
 EXPOSE 8080
 
-# The whole context was copied to /app, so the app package lives in /app/app.
-CMD ["gunicorn", "--chdir", "app", "--bind", "0.0.0.0:8080", "--workers", "2", "app:app"]
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+    CMD [ "wget", "--no-verbose", "--tries=1", "--spider", "http://127.0.0.1:8080/healthz" ]
+
+# Run Gunicorn with access logging streamed to stdout for standard container log collection
+CMD ["gunicorn", "--bind", "0.0.0.0:8080", "--workers", "2", "--access-logfile", "-", "app:app"]
