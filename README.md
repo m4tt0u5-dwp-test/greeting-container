@@ -80,8 +80,10 @@ Added Continuous Integration tests using github actions.
 
 ### Running the build locally
 
-`docker buildx build --load -t m4tt0u5-dwp-test/greeting-container:v1 .` 
-`docker run -it -p 8080:8080 m4tt0u5-dwp-test/greeting-container:v1`
+```shell
+docker buildx build --load -t m4tt0u5-dwp-test/greeting-container:v1 .
+docker run -it -p 8080:8080 m4tt0u5-dwp-test/greeting-container:v1
+```
 
 ### Push to GHCR
 
