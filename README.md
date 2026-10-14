@@ -91,9 +91,11 @@ docker buildx build \
   --annotation "index:org.opencontainers.image.description=Production-grade container for the DWP DevOps assessment" \
   --annotation "index:org.opencontainers.image.source=https://github.com/m4tt0u5-dwp-test/greeting-container" \
   --tag ghcr.io/m4tt0u5-dwp-test/greeting-container:v1 \
+  --tag ghcr.io/m4tt0u5-dwp-test/sample-app:v1 \
   --push .
 ```
 
 ### Pull from GHCR
 
 `docker pull ghcr.io/m4tt0u5-dwp-test/greeting-container:v1`
+`docker pull ghcr.io/m4tt0u5-dwp-test/sample-app:v1`

@@ -117,7 +117,9 @@ jobs:
           context: .
           push: true
           platforms: linux/amd64,linux/arm64
-          tags: ${{ env.IMAGE_REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}
+          tags: |
+            ${{ env.IMAGE_REGISTRY }}/${{ github.actor }}/greeting-container:${{ env.IMAGE_TAG }}
+            ${{ env.IMAGE_REGISTRY }}/${{ github.actor }}/sample-app:${{ env.IMAGE_TAG }}
           annotations: |
             index:org.opencontainers.image.title=greeting-container
             index:org.opencontainers.image.description=Production-grade container for the DWP DevOps assessment
