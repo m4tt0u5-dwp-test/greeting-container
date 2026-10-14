@@ -39,7 +39,7 @@ The application:
 
 -   Created a dedicated system user/group (`appuser`) to run the application.
 -   Removed extraneous debugging and build tools (`curl`, `vim`, compilers) from the final image.
--   Selected `python:3.12-alpine` pinned with SHA256 digest for immutability.
+-   Selected `python:3.12.15-alpine` pinned with SHA256 digest for immutability.
 
 #### Notes on the base image
 
@@ -57,6 +57,7 @@ The application:
 -   Added `--access-logfile -` and `PYTHONUNBUFFERED=1` to stream application access logs directly to `stdout`.
 -   Added `PYTHONDONTWRITEBYTECODE=1` to prevent the creation of .pyc files in docker image
 -   Added a `HEALTHCHECK` to `/healthz` for standalone container verification.
+-   Kept the default `--bind 0.0.0.0:8080` for gunicorn command, this will override any `PORT` environment variables. Reasoning here is because `8080` is used in `EXPOSE`, `HEALTHCHECK` and in pipeline smoke tests.
 
 ### 4. CI/CD Pipeline
 
@@ -83,16 +84,18 @@ docker run -it -p 8080:8080 m4tt0u5-dwp-test/greeting-container:v1
 ```shell
 export GITHUB_TOKEN=<token>
 
-echo $GITHUB_TOKEN | docker login ghcr.io -u m4tt0u5-dwp-test --password-stdin
+echo $GITHUB_TOKEN | docker login ghcr.io -u <github-username> --password-stdin
 
 docker buildx build \
   --platform linux/amd64,linux/arm64 \
   --annotation "index:org.opencontainers.image.description=Production-grade container for the DWP DevOps assessment" \
   --annotation "index:org.opencontainers.image.source=https://github.com/m4tt0u5-dwp-test/greeting-container" \
   --tag ghcr.io/m4tt0u5-dwp-test/greeting-container:v1 \
+  --tag ghcr.io/m4tt0u5-dwp-test/sample-app:v1 \
   --push .
 ```
 
 ### Pull from GHCR
 
 `docker pull ghcr.io/m4tt0u5-dwp-test/greeting-container:v1`
+`docker pull ghcr.io/m4tt0u5-dwp-test/sample-app:v1`
